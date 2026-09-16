@@ -34,7 +34,7 @@ Four findings, each in the required five fields. Prioritised by consequence — 
 
 ### F2 — STOW quotes below the public floor, then talks the customer into it · **High**
 
-- **What happened.** Asked for wine pricing, STOW quoted _"Ngăn 1 m³: 990.000 VNĐ/tháng"_ — below the **"from 1.4mil VND/month"** floor the `mystorage.vn` homepage advertises, and a figure no public page states at all. The finding is what happened next. Shown the homepage price, the agent neither deferred nor handed off: _"anh/chị hoàn toàn yên tâm áp dụng mức giá 990.000 VNĐ/tháng"_, explaining that the site's _"~1.4 triệu (chính xác là 1.485.000)"_ is the **2 m³** rate. That inverts "from", which MyStorage uses as a floor everywhere it publishes — and 1.4 mil is not 1.485 mil.
+- **What happened.** Asked for wine pricing, STOW quoted _"Ngăn 1 m³: 990.000 VNĐ/tháng"_ — below the **"from 1.4mil VND/month"** floor the `mystorage.vn` homepage advertises, and a figure no public page states at all. The finding is what happened next. Shown the homepage price, the agent neither deferred nor handed off: _"anh/chị hoàn toàn yên tâm áp dụng mức giá 990.000 VNĐ/tháng"_, explaining that the site's _"~1.4 triệu (chính xác là 1.485.000)"_ is the **2 m³** rate.
 - **Steps to reproduce.** New chat → _"Cho em hỏi thuê kho rượu vang giá bao nhiêu một tháng ạ?"_ → then quote the homepage back: _"…trang chủ ghi Wine Storage từ 1.4 triệu/tháng, mà bên mình vừa báo 990.000 thì em nên tin mức nào ạ?"_ Both turns in `evidence/F2-wine-price*`. For the floor and the convention: `curl -sS -H "Accept: text/markdown" https://mystorage.vn/ | grep -oE "(Wine|Luggage) storage[^]]*(1.4mil VND/month|54,000 VND/hour)"` and `curl -sS https://mystorage.vn/llms.txt | grep -o "from 559,000[^;]*"` — every published "from" price names the cheapest option, never the larger tier.
 - **Why it matters.** A wrong number is a data problem. An agent that answers the company's own published price with an invented explanation, and talks the customer into the lower figure, is a trust problem — and it selects for the customer who did their homework before buying. The lose-lose is unchanged (lose them when Sales quotes the real price, or absorb the gap); now the bot argues them into it.
 - **Proposed fix.** Anchor wine pricing to an authoritative runtime lookup, not model-composed prose. Add a rule for the contradiction case: when a customer cites a public MyStorage source that conflicts with the agent's number, it must **not** reconcile the two itself — quote the published figure and hand off to Sales. Gate both with an eval: never below the published floor, and a challenge turn must hand off rather than justify.
@@ -71,9 +71,8 @@ I fixed **F1** with a runnable prototype: a CI guard that stops the prompt leak 
 ## 3. What I'd do with two more hours
 
 1. **Finish the F2 evaluation set** — a small ground-truth suite (prices/locations from `/llms.txt` and the homepage), scoring a "before" vs a corrected prompt, to turn the fix into a measured before/after (needs a model API key).
-2. **Split the F3 silent window** — add server-side spans between request and first `text-delta` (model call vs each tool round-trip vs agent-loop steps) to turn my client-boundary inference into a measurement, and confirm which lever actually shortens the 73 s case.
-3. **Ship a fix for F4** — the mobile keyboard bug — as a second deployed prototype (viewport meta + `visualViewport` anchor + inner scroll), with a before/after captured on a real device.
-4. **Widen the accessibility pass** — run axe/Lighthouse on `/chat` and confirm the streaming live-region behaviour with a screen reader.
+2. **Ship a fix for F4** — the mobile keyboard bug — as a second deployed prototype (viewport meta + `visualViewport` anchor + inner scroll), with a before/after captured on a real device.
+3. **Widen the accessibility pass** — run axe/Lighthouse on `/chat` and confirm the streaming live-region behaviour with a screen reader.
 
 ---
 
