@@ -1,0 +1,39 @@
+# F3 — Đo độ trễ tại biên client
+# Ngày: 2026-09-16 · Chrome, phiên thật, 3 lượt liên tiếp trong cùng hội thoại
+# Công cụ: F3-stream-timing.js (dán vào DevTools Console trước khi gửi câu hỏi)
+
+--- Kết quả ---
+
+[stow] TTFB 0.90s | byte đầu 0.93s | xong 64.34s | 1628 bytes
+[stow] TTFB 0.18s | byte đầu 0.20s | xong 14.05s | 2324 bytes
+[stow] TTFB 0.19s | byte đầu 0.23s | xong 73.30s | 2257 bytes
+
+--- Đọc số ---
+
+1. Vận chuyển không chậm. Byte đầu về sau 0,18–0,93 s ở cả ba lượt.
+
+2. Nhưng khách không thấy một chữ nào cho tới giây cuối (quan sát trực tiếp:
+   "STOW is thinking…" đứng im, rồi cả câu trả lời bật ra cùng lúc).
+
+3. Client vô can. Trong app/chat/[[...id]]/page-*.js, mỗi frame SSE 'text-delta'
+   được cộng dồn rồi setMessages() ngay:
+
+       case 'text-delta':
+           assistantText += chunk.delta;
+           setMessages((prev) => prev.map((m) => m.id === assistantMessageId ? {
+               ...m, content: assistantText, parts: [{ type: 'text', text: assistantText }, ...dataParts]
+           } : m));
+
+   Server có phát text-delta thì màn hình đã hiện chữ. Suy ra server không phát
+   text-delta nào trong gần như toàn bộ cửa sổ chờ.
+
+4. Độ trễ không tỉ lệ với độ dài câu trả lời:
+       2.324 byte -> 14,05 s
+       2.257 byte -> 73,30 s
+   Output gần bằng nhau, thời gian gấp hơn 5 lần. Nên đây không phải tốc độ sinh chữ,
+   cũng không phải một chi phí cố định mỗi lượt (nạp lại prompt tĩnh sẽ cộng thêm một
+   lượng gần như không đổi). Nó là công việc biến thiên — nhiều khả năng các vòng gọi
+   tool (getBookingPricing / checkAvailability / getSalesKB) hoặc số bước của agent loop.
+
+Giới hạn: chỉ đo được ở biên nhìn thấy từ client. Việc phân rã cửa sổ đó thành từng
+thành phần là suy luận, không phải phép đo.

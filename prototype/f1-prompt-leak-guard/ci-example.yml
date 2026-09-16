@@ -1,0 +1,19 @@
+# File CI mẫu (GitHub Actions) — minh hoạ cách cắm guard vào pipeline build.
+# Đặt tại .github/workflows/prompt-leak.yml trong repo của stow.
+name: prompt-leak-guard
+
+on: [push, pull_request]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build            # next build -> sinh .next/static
+      - name: Chặn system prompt lọt ra client
+        run: node check-prompt-leak.mjs .next/static
+        # Bước này exit 1 nếu tìm thấy sentinel của prompt -> build đỏ.

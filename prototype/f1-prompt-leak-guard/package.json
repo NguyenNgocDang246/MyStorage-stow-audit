@@ -1,0 +1,14 @@
+{
+  "name": "stow-prompt-leak-guard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "F1 guard — chặn system prompt lọt vào bundle JS công khai (audit stow.mystorage.vn)",
+  "bin": { "check-prompt-leak": "check-prompt-leak.mjs" },
+  "scripts": {
+    "demo:leak": "node check-prompt-leak.mjs fixtures/leaky-bundle.js",
+    "demo:clean": "node check-prompt-leak.mjs fixtures/clean-bundle.js",
+    "check:live": "node check-prompt-leak.mjs --url https://stow.mystorage.vn/chat",
+    "check": "node check-prompt-leak.mjs .next/static"
+  }
+}

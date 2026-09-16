@@ -1,0 +1,29 @@
+# F1 guard — output chạy trên site thật
+# Ngày: 2026-09-16
+# Lệnh: node check-prompt-leak.mjs --url https://stow.mystorage.vn/chat
+---
+Quét 8 file · 6 sentinel
+
+  ✓ /_next/static/chunks/webpack-d679b80bca1bed9a.js
+  ✓ /_next/static/chunks/vendor-b5346dc2c1bc43e4.js
+  ✓ /_next/static/chunks/main-app-c8601c3c2e63afe5.js
+  ✓ /_next/static/chunks/app/layout-bbe03bc58c9fdcf0.js
+  ✓ /_next/static/chunks/app/not-found-40808468059e6259.js
+  ✗ /_next/static/chunks/app/chat/layout-b6ab9543125dad74.js  (577,138 bytes)
+      • "HARD RULES" ×2
+      • "ignore previous instructions" ×1
+      • "Examples of slips that have happened in production" ×1
+      • "currently FULL internally" ×1
+      • "do NOT tell the customer" ×2
+      • "getBookingPricing" ×25
+  ✗ /_next/static/chunks/app/chat/%5B%5B...id%5D%5D/page-fcf58426d41dc68a.js  (930,792 bytes)
+      • "HARD RULES" ×2
+      • "ignore previous instructions" ×1
+      • "Examples of slips that have happened in production" ×1
+      • "currently FULL internally" ×1
+      • "do NOT tell the customer" ×2
+      • "getBookingPricing" ×26
+  ✓ /_next/static/chunks/polyfills-42372ed130431b0a.js
+
+FAIL — phát hiện system prompt trong bundle client. Prompt phải ở lại server (xem F1).
+exit=1

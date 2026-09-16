@@ -1,0 +1,23 @@
+# Personal — keep out of a public repo
+# (comments must be on their own line; a trailing "# ..." becomes part of the pattern)
+cv/
+submit.sh
+private/
+
+# Application scaffolding — local only, not part of the audit
+SUBMISSION-NOTES.md
+CHECKLIST.md
+build-pdf.sh
+application-note.txt
+
+# Generated / build artifacts
+build/
+node_modules/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
